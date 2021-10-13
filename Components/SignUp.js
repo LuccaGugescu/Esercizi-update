@@ -2,10 +2,20 @@ import { useState } from 'react'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import db from "../utils/firebase";
 import { doc, setDoc } from "firebase/firestore"; 
+import { useDispatch } from "react-redux";
+import { login } from "../utils/slices/userSlice";
+import { useRouter } from 'next/router'
 
-function SignUp({setEmail, setPassword, setUser, setName, setSurname, setDate, date, name, email, password, surname}) {
+function SignUp() {
+    const dispatch = useDispatch();
+    const router = useRouter()
     const [verifyPass, setVerifyPass] = useState("");
-
+    const [name, setName] = useState("");
+    const [surname, setSurname] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [date, setDate] = useState("");
+    
     async function addData(uid) {
         await setDoc(doc(db, "users", uid), {
             name: name,
@@ -18,14 +28,15 @@ function SignUp({setEmail, setPassword, setUser, setName, setSurname, setDate, d
     async function signUp(email, password, e) {
         e.preventDefault();
         const auth = getAuth();
-        
+    
         if(password === verifyPass) {
             createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in 
                 console.log("user created " + userCredential.user.uid);
-                setUser(userCredential.user);
+                dispatch(login(userCredential.user));
                 addData(userCredential.user.uid);
+                router.push("/")
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -48,7 +59,7 @@ function SignUp({setEmail, setPassword, setUser, setName, setSurname, setDate, d
                 <input type="password" className="mt-2 p-3 rounded-md" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                 <input type="password" className="mt-2 p-3 rounded-md" placeholder="Enter the same password" onChange={(e) => setVerifyPass(e.target.value)} />
                 <hr />
-                <button className="bg-blue-300 mt-3 rounded-md p-2" onClick={(e) => signUp(email, password, e)}>Crea nuovo account</button>
+                    <button className="bg-blue-300 mt-3 rounded-md p-2" onClick={(e) => signUp(email, password, e)}>Crea nuovo account</button>
             </form>
         </div>
     )

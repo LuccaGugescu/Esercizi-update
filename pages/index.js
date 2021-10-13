@@ -1,12 +1,11 @@
 import Head from 'next/head'
 import Form from '../Components/Form'
 import Main from "../Components/Main";
-import { useState } from "react";
+import { useSelector } from "react-redux";
 ;
 
 export default function Home() {
-  const [user, setUser] = useState(null);
-
+  const user = useSelector((state) => state.auth.user);
   return (
     <div className="bg-gray-100 flex flex-col lg:flex-row justify-center align-center w-screen h-screen items-center">
       <Head>
@@ -19,7 +18,7 @@ export default function Home() {
         <img className="w-72 h-28" src="/tackpay-logo-color.png" />
         <h3 className="text-2xl">Basta rifiutare mance</h3>
       </div>
-      <Form setUser={setUser}/></> : <Main user={user} />}
+      <Form /></> : <Main />}
       
     </div>
   )
